@@ -1,56 +1,69 @@
-# Actividad 3 Paulo Mérida 202002042
+# Actividad 4 Paulo Mérida 202002042
 
 ## paso 1 
-crear un  archivo .sh como prodria ser por ejemplo actividad3.sh
+Debemos de definir  los dos nombres de pipes para los participantes
 
 ```
-#!/bin/bash
-while true; do
-    echo "Hola, mundo! La fecha actual es: $(date)"
-    sleep 1
-done
+mkfifo participante1_pipe
+mkfifo participante2_pipe
 ```
 
 el cual retorna lo siguiente:
 
-> Hola Mundo! la fecha actual es "fecha actual"
 
 ## paso 2
 
-Guardar el script en una ubicación facil de acceder como podria ser:
+Crear dos scripts en bash para cada uno de los participantes del chat en este caso como son dos participantes serian dos scripts.
 
-> /usr/local/actividad3.sh
+### Script 1
+```
+#!/bin/bash
+PARTICIPANTE1 = participante1_pipe
+PARTICIPANTE2 = participante2_pipe
+
+while true; do
+   
+    read -r message < "$PARTICIPANTE2"
+    echo "Participante 2 dice: $message"
+
+    echo "tu mensaje: "
+    read -r reply
+    echo "$reply" > "$PARTICIPANTE1"
+done
+```
+### Script 2
+```
+#!/bin/bash
+
+PARTICIPANTE1 = participante1_pipe
+PARTICIPANTE2 = participante2_pipe
+
+while true; do
+    
+    read -r message < "$PARTICIPANTE1"
+    echo "Participante 1 dice: $message"
+    
+
+    echo "Tu mensaje: "
+    read -r reply
+    echo "$reply" > "$PARTICIPANTE2"
+done
+```
 
 ## paso 3
 
-crear el archivo de servicio systemd el cual podemos nombrar actividad3.service, el cual tendria un codigo como este:
+Darle permisos de ejecucion a los scripts
 ```
-[Unit]
-Description=Servicio de saludo infinito
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/actividad3.sh
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
+chmod +x participante1.sh participante2.sh
 ```
 
 ## paso 4
-Habilitar y empezar el servicio haciendo uso de los siguientes comandos:
+Ejecutar ambos scripts pero en diferentes terminales.
 
 ```
-sudo systemctl enable actividad3.service
-sudo systemctl start actividad3.service
+./participante1.sh
+./participante2.sh
 ```
 
-## paso 5
-Chequear los logs con el siguiente comando:
-
-```
-journalctl -u saludo.service
-```
  
-### siguiendo estos pasos tenemos listo el script junto con el servicio systemd el cual se estara ejecutando indefinidamente imprimiendo el mensaje mostrado en el paso 1 y generando los respectivos logs a los cuales podemos acceder siempre que lo necesitemos.
+### siguiendo estos pasos tenemos listo los scripts para la implementacion de un pequeño chat de dos personas donde unicamente necesitamos ejecutar los scripts en diferentes terminales para enviar mensajes entre si haciendo uso de pipes.
