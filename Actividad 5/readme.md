@@ -1,7 +1,7 @@
 # Actividad 5 Paulo Mérida 202002042
 
 ## Codigo base
-Debemos de definir  los dos nombres de pipes para los participantes
+
 
 ```
 pid = fork();
@@ -12,7 +12,7 @@ thread_create(....);
 fork();
 ```
 ## Codigo Completo de ejemplo
-Debemos de definir  los dos nombres de pipes para los participantes
+
 
 ```
 #include <stdio.h>
